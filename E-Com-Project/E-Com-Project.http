@@ -1,0 +1,6 @@
+@E_Com_Project_HostAddress = http://localhost:5298
+
+GET {{E_Com_Project_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
