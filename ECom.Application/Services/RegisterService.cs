@@ -1,17 +1,16 @@
-﻿using ECom.Application.DTOs.Auth;
-using ECom.Application.DTOs.Register;
+﻿using ECom.Application.DTOs.Register;
 using ECom.Application.Interfaces.Services;
 using ECom.Domain.Interfaces.Repositories;
 using ECom.Domain.Interfaces.Services;
 
 namespace ECom.Application.Services;
 
-public class AuthService : IAuthService
+public class RegisterService : IRegisterService
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtService _jwtService;
 
-    public AuthService(
+    public RegisterService(
         IUserRepository userRepository,
         IJwtService jwtService)
     {
@@ -19,23 +18,7 @@ public class AuthService : IAuthService
         _jwtService = jwtService;
     }
 
-    public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
-    {
-        var user = await _userRepository.GetByUsernameAsync(request.Username);
-
-        if (user == null ||
-            !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-        {
-            throw new UnauthorizedAccessException("Invalid username or password");
-        }
-
-        var token = _jwtService.GenerateToken(user);
-
-        return new LoginResponseDto
-        {
-            JwtToken = token
-        };
-    }
+  
 
     public async Task RegisterAsync(RegisterRequestDto request)
     {

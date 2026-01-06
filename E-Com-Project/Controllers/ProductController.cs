@@ -1,6 +1,5 @@
 ﻿using ECom.Application.DTOs.Product;
 using ECom.Application.Interfaces.Services;
-using ECom.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
