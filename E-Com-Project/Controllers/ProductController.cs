@@ -1,4 +1,5 @@
-﻿using ECom.Application.DTOs.Product;
+﻿using ECom.Application.Common;
+using ECom.Application.DTOs.Product;
 using ECom.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ public class ProductController : ControllerBase
         _productService = productService;
     }
 
-    [HttpGet("getAll")]
+    [HttpGet("GetAll-Product")]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await _productService.GetAllAsync());
@@ -47,10 +48,37 @@ public class ProductController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost]
+    [HttpPost("Add-Product")]
     public async Task<IActionResult> Add(CreateProductDto dto)
     {
-        await _productService.AddAsync(dto);
-        return Ok(new { message = "Product added successfully" });
+        var Product = await _productService.AddAsync(dto);
+        return Ok(new ApiResponse<object>(
+            StatusCodes.Status200OK,
+            "Product Added sucessfully",
+            Product
+            ));
+    }
+    [Authorize(Roles = "Admin")]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateProduct(int id, UpdateProductDto dto)
+    {
+        var updatedProduct = await _productService.UpdateAsync(id, dto);
+        return Ok(new ApiResponse<object>(
+            StatusCodes.Status200OK,
+            "Product Updated",
+            updatedProduct
+            )); ;
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _productService.DeleteAsync(id);
+        return Ok(new ApiResponse<object>(
+            StatusCodes.Status200OK,
+            "Product Deleted successfully",
+            null
+        ));
     }
 }

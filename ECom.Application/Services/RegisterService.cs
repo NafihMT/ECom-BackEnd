@@ -18,7 +18,7 @@ public class RegisterService : IRegisterService
         _jwtService = jwtService;
     }
 
-  
+
 
     public async Task RegisterAsync(RegisterRequestDto request)
     {

@@ -1,8 +1,10 @@
-﻿namespace ECom.Domain.Interfaces.Repositories;
+﻿using ECom.Domain.Entities;
+
+namespace ECom.Domain.Interfaces.Repositories;
 
 public interface IWishlistRepository
 {
-    Task AddAsync(int userId, int productId);
-    Task<IEnumerable<object>> GetByUserAsync(int userId);
+    Task<WishlistItem> AddAsync(int userId, int productId);
+    Task<IEnumerable<WishlistItem>> GetByUserAsync(int userId);
     Task RemoveAsync(int wishlistItemId);
 }

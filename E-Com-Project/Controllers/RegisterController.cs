@@ -19,7 +19,7 @@ public class RegisterController : ControllerBase
     
 
 
-    [HttpPost("register")]
+    [HttpPost("registration")]
     public async Task<IActionResult> Register(RegisterRequestDto request)
     {
         await _regService.RegisterAsync(request);

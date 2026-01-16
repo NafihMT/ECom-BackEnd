@@ -1,6 +1,5 @@
 ﻿using ECom.Application.DTOs.Cart;
 using ECom.Application.Interfaces.Services;
-using ECom.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -37,7 +36,7 @@ public class CartController : ControllerBase
         return Ok(new { status = "success" });
     }
 
-    [HttpGet("getAll")]
+    [HttpGet("GetAll-Cart")]
     public async Task<IActionResult> GetAll()
     {
         return Ok(await _cartService.GetCartItemsAsync(UserId));

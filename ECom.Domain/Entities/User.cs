@@ -14,4 +14,7 @@ public class User : BaseEntity
 
     public Cart Cart { get; set; }
     public Wishlist Wishlist { get; set; }
+
+    public ICollection<Order> Orders { get; set; } = new List<Order>();
+
 }

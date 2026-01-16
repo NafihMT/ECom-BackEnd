@@ -1,4 +1,5 @@
-﻿using ECom.Application.Interfaces.Services;
+﻿using ECom.Application.Common;
+using ECom.Application.Interfaces.Services;
 using ECom.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,20 +25,38 @@ public class WishlistController : ControllerBase
     [HttpPost("{productId}")]
     public async Task<IActionResult> Add(int productId)
     {
-        await _wishlistService.AddToWishlistAsync(UserId, productId);
-        return Ok(new { status = "success" });
+        var addedItem = await _wishlistService.AddToWishlistAsync(UserId, productId);
+
+        return Ok(new ApiResponse<object>(
+            StatusCodes.Status200OK,
+            "Added Successfully",
+            addedItem
+        ));
     }
 
-    [HttpGet("get-all")]
+    [HttpGet("GetAll-Wishlist")]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await _wishlistService.GetWishlistAsync(UserId));
+        var wishlist = await _wishlistService.GetWishlistAsync(UserId);
+
+        return Ok(new ApiResponse<object>(
+            StatusCodes.Status200OK,
+            "Fetched Successfully",
+            wishlist
+            ));
     }
 
     [HttpDelete("{itemId}")]
     public async Task<IActionResult> Delete(int itemId)
     {
         await _wishlistService.RemoveFromWishlistAsync(itemId);
-        return Ok(new { status = "success" });
+        return Ok(new ApiResponse<object>(
+            StatusCodes.Status200OK,
+            "Deleted "
+            ));
+        
     }
+    
 }
+
+

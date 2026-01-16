@@ -5,7 +5,7 @@ namespace ECom.Application.Interfaces.Services;
 public interface ICategoryService
 {
     Task<IEnumerable<CategoryDto>> GetAllAsync();
-    Task AddAsync(CreateCategoryDto dto);
-    Task UpdateAsync(UpdateCategoryDto dto);
-    Task DeleteAsync(int id);
+    Task<CategoryDto> AddAsync(CreateCategoryDto dto);
+    Task<CategoryDto> UpdateAsync(UpdateCategoryDto dto);
+    Task<CategoryDto> DeleteAsync(int id);
 }

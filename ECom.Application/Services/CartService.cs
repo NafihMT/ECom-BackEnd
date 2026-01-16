@@ -15,6 +15,9 @@ public class CartService : ICartService
 
     public async Task AddToCartAsync(int userId, AddToCartDto dto)
     {
+        if (dto.Quantity <= 0)
+            throw new ArgumentException("Quantity must be greater than zero");
+
         await _cartRepository.AddItemAsync(userId, dto.ProductId, dto.Quantity);
     }
 

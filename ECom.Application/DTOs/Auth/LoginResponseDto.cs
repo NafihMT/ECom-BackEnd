@@ -3,4 +3,11 @@
 public class LoginResponseDto
 {
     public string JwtToken { get; set; }
+    public UserDataDto User { get; set; }
+}
+
+public class UserDataDto
+{
+    public string Name { get; set; }
+    public string Role { get; set; }
 }
