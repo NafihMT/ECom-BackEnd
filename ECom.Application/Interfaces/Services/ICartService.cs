@@ -7,5 +7,6 @@ public interface ICartService
     Task AddToCartAsync(int userId, AddToCartDto dto);
     Task UpdateCartItemAsync(int itemId, UpdateCartItemDto dto);
     Task RemoveFromCartAsync(int itemId);
-    Task<IEnumerable<object>> GetCartItemsAsync(int userId);
+    Task<IEnumerable<CartItemDto>> GetCartItemsAsync(int userId);
+
 }

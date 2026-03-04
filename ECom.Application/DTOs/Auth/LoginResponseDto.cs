@@ -4,6 +4,7 @@ public class LoginResponseDto
 {
     public string JwtToken { get; set; }
     public UserDataDto User { get; set; }
+    public string RefreshToken { get; set; }
 }
 
 public class UserDataDto

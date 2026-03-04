@@ -10,12 +10,12 @@ public class AutoMapperProfile : Profile
     public AutoMapperProfile()
     {
         CreateMap<Product, ProductDto>()
-            .ForMember(
-                dest => dest.Category,
-                opt => opt.MapFrom(src => src.Category.Name)
-            );
+            .ForMember(dest => dest.ImageUrl,
+                opt => opt.MapFrom(src => src.ImageUrl))
+            .ForMember(dest => dest.Category,
+                opt => opt.MapFrom(src => src.Category));
 
         CreateMap<Category, CategoryDto>();
-
     }
 }
+

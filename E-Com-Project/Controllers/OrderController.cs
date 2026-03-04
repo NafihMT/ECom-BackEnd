@@ -1,5 +1,7 @@
-﻿using ECom.Application.DTOs.Order;
+﻿using ECom.Application.Common;
+using ECom.Application.DTOs.Order;
 using ECom.Application.Interfaces.Services;
+using ECom.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -30,7 +32,7 @@ public class OrderController : ControllerBase
             return Unauthorized();
 
         var order = await _orderService.PlaceOrderAsync(userId, dto);
-        return Ok(order);
+        return Ok(new ApiResponse<object>(200, "Order Placed", order));
     }
 
     [Authorize]
@@ -46,7 +48,7 @@ public class OrderController : ControllerBase
             return Unauthorized();
 
         var orders = await _orderService.GetByUserAsync(userId);
-        return Ok(orders);
+        return Ok(new ApiResponse<object>(200, "Fetched Successfully", orders));
     }
 
     [Authorize]
@@ -55,16 +57,44 @@ public class OrderController : ControllerBase
     {
         var order = await _orderService.GetByIdAsync(id);
         if (order == null) return NotFound();
-        return Ok(order);
+        return Ok(new ApiResponse<object>(200, "Fetched Successfully", order));
     }
 
     
-    [Authorize(Roles = "Admin")]     
+    [Authorize(Roles = "Admin")]
 
     [HttpPut("{id}/status")]
-    public async Task<IActionResult> UpdateStatus(int id, ECom.Domain.Enums.OrderStatus status)
+    public async Task<IActionResult> UpdateStatus(int id, UpdateOrderStatusDto dto)
     {
-        await _orderService.UpdateStatusAsync(id, status);
-        return Ok(new { message = "Status updated" });
+        var updatedOrder = await _orderService.UpdateStatusAsync(id, dto.Status);
+
+        return Ok(new ApiResponse<OrderDto>(
+            200,
+            "Status Updated",
+            updatedOrder
+        ));
     }
+
+    //[Authorize(Roles = "Admin")]
+    //[HttpGet("all")]
+    //public async Task<IActionResult> GetAllOrders()
+    //{
+    //    var orders = await _orderService.GetAllAsync();
+    //    return Ok(new ApiResponse<object>(200, "Fetched Successfully", orders));
+    //}
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("revenue")]
+    public async Task<IActionResult> GetTotalRevenue()
+    {
+        var totalRevenue = await _orderService.GetTotalRevenueAsync();
+
+        return Ok(new ApiResponse<decimal>(
+            200,
+            "Total Revenue Fetched",
+            totalRevenue
+        ));
+    }
+
+
 }

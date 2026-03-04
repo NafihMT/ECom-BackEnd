@@ -73,13 +73,41 @@ public class OrderService : IOrderService
         return _mapper.Map<IEnumerable<OrderDto>>(orders);
     }
 
-    public async Task UpdateStatusAsync(int orderId, OrderStatus status)
+    public async Task<OrderDto> UpdateStatusAsync(int orderId, OrderStatus status)
     {
-        var order = await _orderRepository.GetByIdAsync(orderId);
-        if (order == null)
-            throw new KeyNotFoundException("Order not found");
 
-        order.Status = status;
-        await _orderRepository.UpdateAsync(order);
+        if (!Enum.IsDefined(typeof(OrderStatus), status))
+            throw new ArgumentException("Invalid order status");
+
+        var order = await _orderRepository.GetByIdAsync(orderId);
+
+
+        if (order == null)
+            throw new Exception("Order not found");
+
+        order.Status = status;   
+
+        await _orderRepository.SaveChangesAsync();
+
+        return new OrderDto
+        {
+            Id = order.Id,
+            Status = order.Status.ToString(),   
+            TotalAmount = order.TotalAmount,
+            CreatedAt = order.CreatedAt
+        };
     }
+
+    //public async Task<IEnumerable<OrderDto>> GetAllAsync()
+    //{
+    //    var orders = await _orderRepository.GetAllAsync();
+    //    return _mapper.Map<IEnumerable<OrderDto>>(orders);
+    //}
+
+    public async Task<decimal> GetTotalRevenueAsync()
+    {
+        return await _orderRepository.GetTotalRevenueAsync();
+    }
+
+
 }

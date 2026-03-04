@@ -30,8 +30,24 @@ public class CartService : ICartService
     {
         await _cartRepository.RemoveFromCartAsync(itemId);
     }
-    public async Task<IEnumerable<object>> GetCartItemsAsync(int userId)
+    public async Task<IEnumerable<CartItemDto>> GetCartItemsAsync(int userId)
     {
-        return await _cartRepository.GetItemsByUserAsync(userId);
+        var cartItems = await _cartRepository.GetItemsByUserAsync(userId);
+
+        if (cartItems == null)
+            return new List<CartItemDto>();
+
+        return cartItems.Select(item => new CartItemDto
+        {
+            Id = item.Id,
+            ProductId = item.ProductId,
+            Quantity = item.Quantity,
+            Name = item.Product?.Name,
+            Price = item.Product?.Price ?? 0,
+            ImageUrl = item.Product?.ImageUrl,
+            Category = item.Product?.Category?.Name
+        });
     }
+
+
 }

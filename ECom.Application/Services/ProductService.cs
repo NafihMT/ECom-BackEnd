@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
+using ECom.Application.DTOs.Category;
 using ECom.Application.DTOs.Product;
 using ECom.Application.Interfaces.Services;
-using ECom.Domain.Interfaces.Repositories;
 using ECom.Domain.Entities;
+using ECom.Domain.Interfaces.Repositories;
 
 namespace ECom.Application.Services;
 
@@ -23,7 +24,22 @@ public class ProductService : IProductService
     public async Task<IEnumerable<ProductDto>> GetAllAsync()
     {
         var products = await _productRepository.GetAllAsync();
-        return _mapper.Map<IEnumerable<ProductDto>>(products);
+        //return _mapper.Map<IEnumerable<ProductDto>>(products);
+
+        return products.Select(p => new ProductDto
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Price = p.Price,
+            ImageUrl = p.ImageUrl,   
+            Description = p.Description,
+            Category = new CategoryDto
+            {
+                Id = p.Category.Id,
+                Name = p.Category.Name
+            }
+        });
+
     }
 
     public async Task<ProductDto> GetByIdAsync(int id)
@@ -92,7 +108,19 @@ public class ProductService : IProductService
 
         var createdProduct = await _productRepository.GetByIdAsync(product.Id);
 
-        return _mapper.Map<ProductDto>(createdProduct);
+        return new ProductDto
+        {
+            Id = createdProduct.Id,
+            Name = createdProduct.Name,
+            Price = createdProduct.Price,
+            ImageUrl = createdProduct.ImageUrl,
+            Description = createdProduct.Description,
+            Category = new CategoryDto
+            {
+                Id = createdProduct.Category.Id,
+                Name = createdProduct.Category.Name
+            }
+        };
     }
     public async Task DeleteAsync(int id)
     {

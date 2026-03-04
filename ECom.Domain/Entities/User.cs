@@ -12,6 +12,9 @@ public class User : BaseEntity
     public string PasswordHash { get; set; }
     public UserRole Role { get; set; }
 
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpiryTime { get; set; }
+
     public Cart Cart { get; set; }
     public Wishlist Wishlist { get; set; }
 

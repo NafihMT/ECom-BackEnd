@@ -1,6 +1,6 @@
 ﻿using ECom.Application.DTOs.Wishlist;
-using ECom.Application.DTOs.Product; // Ensure you have this namespace
-using ECom.Application.DTOs.Category; // And this one
+using ECom.Application.DTOs.Product; 
+using ECom.Application.DTOs.Category; 
 using ECom.Application.Interfaces.Services;
 using ECom.Domain.Interfaces.Repositories;
 
@@ -17,14 +17,21 @@ public class WishlistService : IWishlistService
 
     public async Task<WishlistItemDto> AddToWishlistAsync(int userId, int productId)
     {
+        // FIX: Check for duplicates before adding
+        var existingItems = await _wishlistRepository.GetByUserAsync(userId);
+        if (existingItems.Any(i => i.ProductId == productId))
+        {
+            // Return existing item or handle as a custom exception
+            var existing = existingItems.First(i => i.ProductId == productId);
+            return new WishlistItemDto { Id = existing.Id, ProductId = existing.ProductId };
+        }
+
         var item = await _wishlistRepository.AddAsync(userId, productId);
 
         return new WishlistItemDto
         {
             Id = item.Id,
             ProductId = item.ProductId
-            // We don't necessarily need the full product details on "Add" response 
-            // since the frontend re-fetches the list anyway.
         };
     }
 
@@ -42,7 +49,7 @@ public class WishlistService : IWishlistService
                 Id = i.Product.Id,
                 Name = i.Product.Name,
                 Price = i.Product.Price,
-                Image = i.Product.Image,
+                ImageUrl = i.Product.ImageUrl,
                 Description = i.Product.Description,
                 Category = i.Product.Category == null ? null : new CategoryDto
                 {

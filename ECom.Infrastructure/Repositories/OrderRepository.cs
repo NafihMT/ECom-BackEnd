@@ -46,4 +46,21 @@ public class OrderRepository : IOrderRepository
         _context.Orders.Update(order);
         await _context.SaveChangesAsync();
     }
+    public async Task SaveChangesAsync()
+    {
+        await _context.SaveChangesAsync();
+    }
+
+    //public async Task<IEnumerable<Order>> GetAllAsync()
+    //{
+    //    return await _context.Orders
+    //        .Include(o => o.Items)
+    //        .ToListAsync();
+    //}
+
+    public async Task<decimal> GetTotalRevenueAsync()
+    {
+        return await _context.Orders
+            .SumAsync(o => o.TotalAmount);
+    }
 }
