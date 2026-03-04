@@ -32,6 +32,27 @@ public class ProductService : IProductService
         return _mapper.Map<ProductDto>(product);
     }
 
+    public async Task<ProductDto> UpdateAsync(int id, UpdateProductDto dto)
+    {
+        var product = await _productRepository.GetByIdAsync(id);
+
+        if (product == null)
+            throw new Exception("Product not found");
+
+        _mapper.Map(dto, product);
+
+        try
+        {
+            await _productRepository.UpdateAsync(product);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Database update failed: {ex.InnerException?.Message ?? ex.Message}");
+        }
+
+        return _mapper.Map<ProductDto>(product);
+    }
+
 
 
     public async Task<IEnumerable<ProductDto>> GetByCategoryAsync(string category)
@@ -60,10 +81,21 @@ public class ProductService : IProductService
     }
 
 
-    public async Task AddAsync(CreateProductDto dto)
+    public async Task<ProductDto> AddAsync(CreateProductDto dto)
     {
         var product = _mapper.Map<Product>(dto);
 
+        if (product == null)
+            throw new Exception("Invalid product data");
+
         await _productRepository.AddAsync(product);
+
+        var createdProduct = await _productRepository.GetByIdAsync(product.Id);
+
+        return _mapper.Map<ProductDto>(createdProduct);
+    }
+    public async Task DeleteAsync(int id)
+    {
+        await _productRepository.DeleteAsync(id);
     }
 }

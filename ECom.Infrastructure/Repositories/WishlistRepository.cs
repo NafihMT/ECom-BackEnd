@@ -14,7 +14,7 @@ public class WishlistRepository : IWishlistRepository
         _context = context;
     }
 
-    public async Task AddAsync(int userId, int productId)
+    public async Task<WishlistItem> AddAsync(int userId, int productId)
     {
         var wishlist = await _context.Wishlists
             .Include(w => w.Items)
@@ -22,38 +22,52 @@ public class WishlistRepository : IWishlistRepository
 
         if (wishlist == null)
         {
-            wishlist = new Wishlist { UserId = userId };
+            wishlist = new Wishlist
+            {
+                UserId = userId,
+                Items = new List<WishlistItem>()
+            };
             _context.Wishlists.Add(wishlist);
         }
 
-        wishlist.Items ??= new List<WishlistItem>();
+        var existingItem = wishlist.Items.FirstOrDefault(i => i.ProductId == productId);
+        if (existingItem != null)
+        {
+            return existingItem;
+        }
 
-        wishlist.Items.Add(new WishlistItem { ProductId = productId });
+        var item = new WishlistItem
+        {
+            ProductId = productId
+        };
+
+        wishlist.Items.Add(item);
 
         await _context.SaveChangesAsync();
+
+        return item;
     }
 
-    public async Task<IEnumerable<object>> GetByUserAsync(int userId)
+    public async Task<IEnumerable<WishlistItem>> GetByUserAsync(int userId)
     {
         return await _context.WishlistItems
             .Include(wi => wi.Product)
+                .ThenInclude(p => p.Category) 
+            .Include(wi => wi.Wishlist)
             .Where(wi => wi.Wishlist.UserId == userId)
-            .Select(wi => new
-            {
-                wi.Id,
-                wi.Product.Name,
-                wi.Product.Price
-            })
-            .ToListAsync<object>();
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task RemoveAsync(int wishlistItemId)
     {
         var item = await _context.WishlistItems.FindAsync(wishlistItemId);
-        if (item == null) return;
+        if (item == null)
+        {
+            return;
+        }
 
         _context.WishlistItems.Remove(item);
         await _context.SaveChangesAsync();
     }
 }
-

@@ -75,10 +75,12 @@ public class CartRepository : ICartRepository
             .Where(ci => ci.Cart.UserId == userId)
             .Select(ci => new
             {
-                ci.Id,
+                ci.Id,          
+                ProductId = ci.ProductId, 
                 ci.Product.Name,
                 ci.Quantity,
-                ci.Product.Price
+                ci.Product.Price,
+                ci.Product.Image
             })
             .ToListAsync<object>();
     }

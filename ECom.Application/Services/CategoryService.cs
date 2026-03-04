@@ -12,7 +12,7 @@ public class CategoryService : ICategoryService
     public CategoryService(ICategoryRepository categoryRepository)
     {
         _categoryRepository = categoryRepository;
-    }
+    } 
 
     public async Task<IEnumerable<CategoryDto>> GetAllAsync()
     {
@@ -25,7 +25,7 @@ public class CategoryService : ICategoryService
         });
     }
 
-    public async Task AddAsync(CreateCategoryDto dto)
+    public async Task<CategoryDto> AddAsync(CreateCategoryDto dto)
     {
         var category = new Category
         {
@@ -34,22 +34,38 @@ public class CategoryService : ICategoryService
         };
 
         await _categoryRepository.AddAsync(category);
+        return new CategoryDto
+        {
+            Id = category.Id,
+            Name = category.Name
+        };
+
     }
 
-    public async Task UpdateAsync(UpdateCategoryDto dto)
+    public async Task<CategoryDto> UpdateAsync(UpdateCategoryDto dto)
     {
         var category = await _categoryRepository.GetByIdAsync(dto.Id)
-            ?? throw new Exception("Category not found");
+            ?? throw new KeyNotFoundException("Category not found");
 
         category.Name = dto.Name;
         await _categoryRepository.UpdateAsync(category);
+        return new CategoryDto
+        {
+            Id = category.Id,
+            Name = category.Name
+        };
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task<CategoryDto> DeleteAsync(int id)
     {
         var category = await _categoryRepository.GetByIdAsync(id)
-            ?? throw new Exception("Category not found");
+            ?? throw new KeyNotFoundException("Category not found");
 
         await _categoryRepository.DeleteAsync(category);
+        return new CategoryDto
+        {
+            Id = category.Id,
+            Name = category.Name
+        };
     }
 }

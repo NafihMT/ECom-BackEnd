@@ -9,10 +9,11 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IRegisterService, RegisterService>();
         services.AddScoped<IProductService, ProductService>();
-        services.AddScoped<ICategoryService, CategoryService>(); 
+        services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IOrderService, OrderService>();
 
+        services.AddScoped<IRegisterService, RegisterService>();
         return services;
     }
 }

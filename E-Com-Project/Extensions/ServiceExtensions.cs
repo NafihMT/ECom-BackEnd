@@ -12,7 +12,7 @@ public static class ServiceExtensions
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ICartService, CartService>();
         services.AddScoped<IWishlistService, WishlistService>();
-
+        services.AddScoped<IRegisterService, RegisterService>();
         return services;
     }
 }

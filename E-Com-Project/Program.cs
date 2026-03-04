@@ -1,13 +1,11 @@
 using ECom.Api.Extensions;
+using ECom.Api.Middlewares;
+using ECom.Application;
 using ECom.Application.Mappings;
 using ECom.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Microsoft.OpenApi.Models;
-using ECom.Application;
-using ECom.Infrastructure;
 
 
 
@@ -52,7 +50,8 @@ builder.Services.AddSwaggerGen(c =>
 
 
 //AutoMapper
-builder.Services.AddAutoMapper(typeof(ProductProfile));
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -76,12 +75,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy => policy.WithOrigins("http://localhost:5173") // Frontend port
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
+
+
+
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+app.UseCors("AllowReactApp");
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

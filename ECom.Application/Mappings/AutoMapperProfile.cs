@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ECom.Application.DTOs.Category;
 using ECom.Application.DTOs.Product;
 using ECom.Domain.Entities;
 
@@ -13,6 +14,8 @@ public class AutoMapperProfile : Profile
                 dest => dest.Category,
                 opt => opt.MapFrom(src => src.Category.Name)
             );
+
+        CreateMap<Category, CategoryDto>();
 
     }
 }

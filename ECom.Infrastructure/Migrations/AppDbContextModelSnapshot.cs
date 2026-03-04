@@ -81,9 +81,6 @@ namespace ECom.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -91,6 +88,89 @@ namespace ECom.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Full Face"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Half Face"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Women"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Junior"
+                        });
+                });
+
+            modelBuilder.Entity("ECom.Domain.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("ECom.Domain.Entities.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("ECom.Domain.Entities.Product", b =>
@@ -111,11 +191,16 @@ namespace ECom.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -167,10 +252,10 @@ namespace ECom.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 26, 11, 663, DateTimeKind.Utc).AddTicks(9106),
+                            CreatedAt = new DateTime(2026, 1, 16, 17, 0, 8, 871, DateTimeKind.Utc).AddTicks(9996),
                             Email = "admin@ecom.com",
                             Name = "Admin",
-                            PasswordHash = "$2a$11$TjhKRDmnnROdGBGiYYiH..HVWwikImrhs9DRaekhnf/W8sTHbOpuS",
+                            PasswordHash = "$2a$11$lvpvtx9v2uUwW8AuUnJql.jQ2Xr7hsy9Vsjq9zsurPNlvw8rydUxi",
                             PhoneNo = "9999999999",
                             Role = 2,
                             Username = "admin"
@@ -255,12 +340,42 @@ namespace ECom.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("ECom.Domain.Entities.Order", b =>
+                {
+                    b.HasOne("ECom.Domain.Entities.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ECom.Domain.Entities.OrderItem", b =>
+                {
+                    b.HasOne("ECom.Domain.Entities.Order", "Order")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ECom.Domain.Entities.Product", "Product")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("ECom.Domain.Entities.Product", b =>
                 {
                     b.HasOne("ECom.Domain.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -306,10 +421,22 @@ namespace ECom.Infrastructure.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("ECom.Domain.Entities.Order", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("ECom.Domain.Entities.Product", b =>
+                {
+                    b.Navigation("OrderItems");
+                });
+
             modelBuilder.Entity("ECom.Domain.Entities.User", b =>
                 {
                     b.Navigation("Cart")
                         .IsRequired();
+
+                    b.Navigation("Orders");
 
                     b.Navigation("Wishlist")
                         .IsRequired();
