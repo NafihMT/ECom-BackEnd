@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ECom.Application.DTOs.Category;
 using ECom.Application.DTOs.Product;
+using ECom.Application.DTOs.User;
 using ECom.Domain.Entities;
 
 namespace ECom.Application.Mappings;
@@ -16,6 +17,7 @@ public class AutoMapperProfile : Profile
                 opt => opt.MapFrom(src => src.Category));
 
         CreateMap<Category, CategoryDto>();
+        CreateMap<User, UserDto>();
     }
 }
 

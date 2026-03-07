@@ -21,6 +21,10 @@ public class AuthService : IAuthService
     public async Task<ApiResponse<LoginResponseDto>> LoginAsync(LoginRequestDto request)
     {
         var user = await _userRepository.GetByUsernameAsync(request.Username);
+        if (user.IsBlocked)
+        {
+            return new ApiResponse<LoginResponseDto>(403, "User is Blocked by admin !!! ");
+        }
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
@@ -58,10 +62,13 @@ public class AuthService : IAuthService
 
         var user = await _userRepository.GetByRefreshTokenAsync(request.RefreshToken);
 
-        // 🔐 Validate refresh token
         if (user == null)
         {
             return new ApiResponse<LoginResponseDto>(401, "Invalid refresh token");
+        }
+        if (user.IsBlocked)
+        {
+            return new ApiResponse<LoginResponseDto>(403, "User account is blocked");
         }
 
         if (user.RefreshTokenExpiryTime == null ||
@@ -70,11 +77,9 @@ public class AuthService : IAuthService
             return new ApiResponse<LoginResponseDto>(401, "Refresh token expired");
         }
 
-        // 🔁 Generate new tokens (ROTATION)
         var newAccessToken = _jwtService.GenerateToken(user);
         var newRefreshToken = _jwtService.GenerateRefreshToken();
 
-        // 🔄 Replace old refresh token
         user.RefreshToken = newRefreshToken;
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
 
@@ -137,4 +142,5 @@ public class AuthService : IAuthService
 
         await _userRepository.UpdateAsync(user);
     }
+
 }

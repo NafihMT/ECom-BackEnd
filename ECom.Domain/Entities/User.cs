@@ -10,7 +10,9 @@ public class User : BaseEntity
     public string PhoneNo { get; set; }
     public string Username { get; set; }
     public string PasswordHash { get; set; }
+
     public UserRole Role { get; set; }
+    public bool IsBlocked { get; set; } = false;
 
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiryTime { get; set; }
