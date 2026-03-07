@@ -14,7 +14,12 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public async Task<User> GetByUsernameAsync(string username)
+    public async Task<IEnumerable<User>> GetAllAsync()
+    {
+        return await _context.Users.ToListAsync();
+    }
+
+    public async Task<User?> GetByUsernameAsync(string username)
     {
         return await _context.Users
             .Include(u => u.Cart)
@@ -22,14 +27,33 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(x => x.Username == username);
     }
 
-    public async Task<User> GetByIdAsync(int id)
+    public async Task<User?> GetByIdAsync(int id)
     {
-        return await _context.Users.FindAsync(id);
+        return await _context.Users
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task AddAsync(User user)
     {
         _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<User?> GetByRefreshTokenAsync(string refreshToken)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+    }
+
+    public async Task UpdateAsync(User user)
+    {
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(User user)
+    {
+        _context.Users.Remove(user);
         await _context.SaveChangesAsync();
     }
 }

@@ -24,6 +24,13 @@ public class AuthController : ControllerBase
         return StatusCode(response.StatusCode, response);
     }
 
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh(TokenRefreshRequestDto request)
+    {
+        var user = await _authService.RefreshTokenAsync(request);
+        return Ok(user);
+    }
+
     [Authorize]
     [HttpGet("profile")]
     public async Task<IActionResult> GetProfile()
@@ -33,5 +40,21 @@ public class AuthController : ControllerBase
 
         var response = await _authService.GetProfileAsync(int.Parse(userIdClaim.Value));
         return StatusCode(response.StatusCode, response);
+    }
+
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+        if (userIdClaim == null)
+            return Unauthorized();
+
+        var userId = int.Parse(userIdClaim.Value);
+
+        await _authService.LogoutAsync(userId);
+
+        return Ok("Logged out successfully");
     }
 }

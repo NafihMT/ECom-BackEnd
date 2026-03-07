@@ -4,7 +4,17 @@ namespace ECom.Domain.Interfaces.Repositories;
 
 public interface IUserRepository
 {
-    Task<User> GetByUsernameAsync(string username);
-    Task<User> GetByIdAsync(int id);
+    Task<IEnumerable<User>> GetAllAsync();
+
+    Task<User?> GetByUsernameAsync(string username);
+
+    Task<User?> GetByIdAsync(int id);
+
     Task AddAsync(User user);
+
+    Task<User?> GetByRefreshTokenAsync(string refreshToken);
+
+    Task UpdateAsync(User user);
+
+    Task DeleteAsync(User user);
 }

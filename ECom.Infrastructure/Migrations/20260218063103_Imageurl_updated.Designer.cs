@@ -4,6 +4,7 @@ using ECom.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECom.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260218063103_Imageurl_updated")]
+    partial class Imageurl_updated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -192,8 +195,8 @@ namespace ECom.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Image");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -225,9 +228,6 @@ namespace ECom.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsBlocked")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -239,12 +239,6 @@ namespace ECom.Infrastructure.Migrations
                     b.Property<string>("PhoneNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RefreshToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("RefreshTokenExpiryTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
@@ -261,11 +255,10 @@ namespace ECom.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 3, 7, 6, 19, 23, 309, DateTimeKind.Utc).AddTicks(1077),
+                            CreatedAt = new DateTime(2026, 2, 18, 6, 31, 2, 16, DateTimeKind.Utc).AddTicks(7215),
                             Email = "admin@ecom.com",
-                            IsBlocked = false,
                             Name = "Admin",
-                            PasswordHash = "$2a$11$DAy1Rk641lmXEsQBBdipdeB135ZLGMPRmgDhkot8sqLBHvqB8YJYa",
+                            PasswordHash = "$2a$11$T7RbKfnCxbUclgpV5/Dr7ebIAJmmNx.270ZhSAf.8IHqUbDCAL/x6",
                             PhoneNo = "9999999999",
                             Role = 2,
                             Username = "admin"

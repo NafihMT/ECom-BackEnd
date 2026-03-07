@@ -9,4 +9,9 @@ public interface IOrderRepository
     Task<Order?> GetByIdAsync(int id);
     Task<IEnumerable<Order>> GetByUserAsync(int userId);
     Task UpdateAsync(Order order);
+    Task SaveChangesAsync();
+
+    //Task<IEnumerable<Order>> GetAllAsync();
+    Task<decimal> GetTotalRevenueAsync();
+
 }

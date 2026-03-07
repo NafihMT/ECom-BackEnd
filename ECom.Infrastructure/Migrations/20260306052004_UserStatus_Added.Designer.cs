@@ -4,6 +4,7 @@ using ECom.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECom.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260306052004_UserStatus_Added")]
+    partial class UserStatus_Added
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -261,11 +264,11 @@ namespace ECom.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 3, 7, 6, 19, 23, 309, DateTimeKind.Utc).AddTicks(1077),
+                            CreatedAt = new DateTime(2026, 3, 6, 5, 20, 2, 810, DateTimeKind.Utc).AddTicks(5314),
                             Email = "admin@ecom.com",
                             IsBlocked = false,
                             Name = "Admin",
-                            PasswordHash = "$2a$11$DAy1Rk641lmXEsQBBdipdeB135ZLGMPRmgDhkot8sqLBHvqB8YJYa",
+                            PasswordHash = "$2a$11$8bGr49AlrE/zfPjoR3BZ9eUSBjOK95/RStpuZUd5NjGUZ23I9auvi",
                             PhoneNo = "9999999999",
                             Role = 2,
                             Username = "admin"

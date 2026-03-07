@@ -24,7 +24,7 @@ public class ProductRepository : IProductRepository
     public async Task<Product> GetByIdAsync(int id)
     {
         return await _context.Products
-            .Include(p => p.Category)
+            .Include(p => p.Category)   
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
@@ -73,6 +73,7 @@ public class ProductRepository : IProductRepository
     {
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
+        //return product;
     }
 
     public async Task DeleteAsync(int id)

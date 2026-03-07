@@ -20,9 +20,7 @@ public class CartRepository : ICartRepository
             .AnyAsync(p => p.Id == productId);
 
         if (!productExists)
-        {
             throw new ArgumentException("Invalid product id");
-        }
 
         var cart = await _context.Carts
             .Include(c => c.Items)
@@ -58,42 +56,38 @@ public class CartRepository : ICartRepository
         await _context.SaveChangesAsync();
     }
 
-
     public async Task UpdateQuantityAsync(int cartItemId, int quantity)
     {
         var item = await _context.CartItems.FindAsync(cartItemId);
-        if (item == null) return;
+
+        if (item == null)
+            throw new KeyNotFoundException("Cart item not found");
 
         item.Quantity = quantity;
+
         await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<object>> GetItemsByUserAsync(int userId)
+    public async Task<IEnumerable<CartItem>> GetItemsByUserAsync(int userId)
     {
         return await _context.CartItems
             .Include(ci => ci.Product)
+                .ThenInclude(p => p.Category)
+            .Include(ci => ci.Cart)   
             .Where(ci => ci.Cart.UserId == userId)
-            .Select(ci => new
-            {
-                ci.Id,          
-                ProductId = ci.ProductId, 
-                ci.Product.Name,
-                ci.Quantity,
-                ci.Product.Price,
-                ci.Product.Image
-            })
-            .ToListAsync<object>();
+            .ToListAsync();
     }
+
 
     public async Task RemoveFromCartAsync(int cartItemId)
     {
         var item = await _context.CartItems.FindAsync(cartItemId);
+
         if (item == null)
             throw new KeyNotFoundException("Cart item not found");
 
         _context.CartItems.Remove(item);
+
         await _context.SaveChangesAsync();
     }
 }
-
-

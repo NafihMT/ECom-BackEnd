@@ -1,7 +1,6 @@
 ﻿using ECom.Application.Common;
 using ECom.Application.DTOs.Cart;
 using ECom.Application.Interfaces.Services;
-using ECom.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -18,36 +17,39 @@ public class CartController : ControllerBase
         _cartService = cartService;
     }
 
-    private int UserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+    private int UserId =>
+        int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-    // FIX: Removed "GetAll-Cart" so the frontend can just call /api/cart
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetCart()
     {
-        var items = await _cartService.GetCartItemsAsync(UserId);
-        return Ok(new ApiResponse<IEnumerable<object>>(200, "Fetched Successfully", items));
+        var result = await _cartService.GetCartItemsAsync(UserId);
+        return Ok(result);
     }
+
+
 
     [HttpPost("{productId}")]
     public async Task<IActionResult> AddToCart(int productId, AddToCartDto dto)
     {
         dto.ProductId = productId;
+
         await _cartService.AddToCartAsync(UserId, dto);
-        return Ok(new ApiResponse<object>(200, "Added to cart", null));
+
+        return Ok(new ApiResponse<object>(200, "Added to cart", dto));
     }
 
-    // FIX: Route updated to /api/cart/update/{itemId} to match standard naming
     [HttpPut("update/{itemId}")]
     public async Task<IActionResult> UpdateItem(int itemId, UpdateCartItemDto dto)
     {
         await _cartService.UpdateCartItemAsync(itemId, dto);
-        return Ok(new ApiResponse<object>(200, "Updated successfully", null));
+        return Ok(new ApiResponse<object>(200, "Updated successfully", dto));
     }
 
     [HttpDelete("remove/{itemId}")]
     public async Task<IActionResult> Delete(int itemId)
     {
         await _cartService.RemoveFromCartAsync(itemId);
-        return Ok(new ApiResponse<object>(200, "Removed successfully", null));
+        return Ok(new ApiResponse<object>(200, "Removed successfully", ""));
     }
 }

@@ -12,7 +12,7 @@ public class CreateProductDto
     public decimal Price { get; set; }
     
     [Required]
-    public string Image { get; set; }
+    public string ImageUrl { get; set; }
     
     [Required]
     public string Description { get; set; }
