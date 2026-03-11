@@ -37,12 +37,21 @@ public class CartRepository : ICartRepository
             _context.Carts.Add(cart);
         }
 
-        var existingItem = cart.Items
-            .FirstOrDefault(i => i.ProductId == productId);
+        var existingItems = cart.Items.Where(i => i.ProductId == productId).ToList();
 
-        if (existingItem != null)
+        if (existingItems.Any())
         {
-            existingItem.Quantity += quantity;
+            var primaryItem = existingItems.First();
+            primaryItem.Quantity += quantity;
+
+            if (existingItems.Count > 1)
+            {
+                foreach (var duplicate in existingItems.Skip(1))
+                {
+                    primaryItem.Quantity += duplicate.Quantity;
+                    _context.CartItems.Remove(duplicate);
+                }
+            }
         }
         else
         {
@@ -55,7 +64,6 @@ public class CartRepository : ICartRepository
 
         await _context.SaveChangesAsync();
     }
-
     public async Task UpdateQuantityAsync(int cartItemId, int quantity)
     {
         var item = await _context.CartItems.FindAsync(cartItemId);
@@ -89,5 +97,12 @@ public class CartRepository : ICartRepository
         _context.CartItems.Remove(item);
 
         await _context.SaveChangesAsync();
+    }
+    public async Task<CartItem?> GetByIdAsync(int itemId)
+    {
+        return await _context.CartItems
+            .Include(ci => ci.Product)
+                .ThenInclude(p => p.Category)
+            .FirstOrDefaultAsync(ci => ci.Id == itemId);
     }
 }

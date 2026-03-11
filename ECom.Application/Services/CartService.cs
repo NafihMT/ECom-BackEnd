@@ -21,9 +21,24 @@ public class CartService : ICartService
         await _cartRepository.AddItemAsync(userId, dto.ProductId, dto.Quantity);
     }
 
-    public async Task UpdateCartItemAsync(int itemId, UpdateCartItemDto dto)
+
+    public async Task<CartItemDto> UpdateCartItemAsync(int itemId, UpdateCartItemDto dto)
     {
         await _cartRepository.UpdateQuantityAsync(itemId, dto.Quantity);
+
+        var item = await _cartRepository.GetByIdAsync(itemId);
+        if (item == null) throw new KeyNotFoundException("Cart item not found");
+
+        return new CartItemDto
+        {
+            Id = item.Id,
+            ProductId = item.ProductId,
+            Quantity = item.Quantity,
+            Name = item.Product?.Name,
+            Price = item.Product?.Price ?? 0,
+            ImageUrl = item.Product?.ImageUrl,
+            Category = item.Product?.Category?.Name
+        };
     }
 
     public async Task RemoveFromCartAsync(int itemId)

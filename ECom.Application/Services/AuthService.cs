@@ -21,12 +21,18 @@ public class AuthService : IAuthService
     public async Task<ApiResponse<LoginResponseDto>> LoginAsync(LoginRequestDto request)
     {
         var user = await _userRepository.GetByUsernameAsync(request.Username);
+
+        if (user == null)
+        {
+            return new ApiResponse<LoginResponseDto>(401, "Invalid username or password");
+        }
+
         if (user.IsBlocked)
         {
             return new ApiResponse<LoginResponseDto>(403, "User is Blocked by admin !!! ");
         }
 
-        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+        if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
             return new ApiResponse<LoginResponseDto>(401, "Invalid username or password");
         }

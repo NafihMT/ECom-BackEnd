@@ -11,4 +11,5 @@ public class OrderDto
     public DateTime CreatedAt { get; set; }
 
     public IEnumerable<OrderItemDto> Items { get; set; } = new List<OrderItemDto>();
+    public ShippingAddressDto ShippingAddress { get; set; } 
 }

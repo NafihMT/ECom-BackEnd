@@ -42,6 +42,9 @@ public class AppDbContext : DbContext
             .HasForeignKey(oi => oi.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        
+        modelBuilder.Entity<Order>().OwnsOne(o => o.ShippingAddress);
+
 
         modelBuilder.Entity<Product>()
             .HasOne(p => p.Category)

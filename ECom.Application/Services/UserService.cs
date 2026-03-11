@@ -60,7 +60,7 @@ namespace ECom.Application.Services
                 PhoneNo = dto.PhoneNo,
                 Username = dto.Username,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = dto.Role,
+                Role = Enum.Parse<UserRole>(dto.Role),
                 IsBlocked = false
             };
 
@@ -76,15 +76,12 @@ namespace ECom.Application.Services
             if (user == null)
                 throw new KeyNotFoundException("User not found");
 
-            //var existingUser = await _userRepository.GetByUsernameAsync(dto.Username);
-            //if (existingUser != null && existingUser.Id != id)
-            //    throw new Exception("Username already exists");
-
             user.Name = dto.Name;
-            //user.Username = dto.Username;
             user.Email = dto.Email;
             user.PhoneNo = dto.PhoneNo;
             user.Role = Enum.Parse<UserRole>(dto.Role);
+
+            user.IsBlocked = dto.IsBlocked;
 
             await _userRepository.UpdateAsync(user);
 
@@ -118,9 +115,7 @@ namespace ECom.Application.Services
             if (user == null)
                 throw new Exception("User not found");
 
-            user.IsBlocked = true;
-
-            await _userRepository.UpdateAsync(user);
+            await _userRepository.DeleteAsync(user);
         }
     }
 

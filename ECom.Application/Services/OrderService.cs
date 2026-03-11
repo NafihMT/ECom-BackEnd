@@ -32,7 +32,14 @@ public class OrderService : IOrderService
         {
             UserId = userId,
             Status = OrderStatus.Pending,
-            Items = new List<OrderItem>()
+            Items = new List<OrderItem>(),
+            ShippingAddress = new ShippingAddress
+            {
+                F_Name = dto.ShippingAddress.f_name,
+                Address = dto.ShippingAddress.address,
+                City = dto.ShippingAddress.city,
+                ZipCode = dto.ShippingAddress.zipCode
+            }
         };
 
         decimal total = 0m;
@@ -98,11 +105,11 @@ public class OrderService : IOrderService
         };
     }
 
-    //public async Task<IEnumerable<OrderDto>> GetAllAsync()
-    //{
-    //    var orders = await _orderRepository.GetAllAsync();
-    //    return _mapper.Map<IEnumerable<OrderDto>>(orders);
-    //}
+    public async Task<IEnumerable<OrderDto>> GetAllAsync()
+    {
+        var orders = await _orderRepository.GetAllAsync();
+        return _mapper.Map<IEnumerable<OrderDto>>(orders);
+    }
 
     public async Task<decimal> GetTotalRevenueAsync()
     {
