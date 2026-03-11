@@ -75,13 +75,13 @@ public class OrderController : ControllerBase
         ));
     }
 
-    //[Authorize(Roles = "Admin")]
-    //[HttpGet("all")]
-    //public async Task<IActionResult> GetAllOrders()
-    //{
-    //    var orders = await _orderService.GetAllAsync();
-    //    return Ok(new ApiResponse<object>(200, "Fetched Successfully", orders));
-    //}
+    [Authorize(Roles = "Admin")]
+    [HttpGet] 
+    public async Task<IActionResult> GetAllOrders()
+    {
+        var orders = await _orderService.GetAllAsync();
+        return Ok(new ApiResponse<object>(200, "Fetched Successfully", orders));
+    }
 
     [Authorize(Roles = "Admin")]
     [HttpGet("revenue")]

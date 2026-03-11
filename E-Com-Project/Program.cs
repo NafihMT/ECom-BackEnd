@@ -1,4 +1,5 @@
 using ECom.Api.Extensions;
+using ECom.Api.Middleware;
 using ECom.Api.Middlewares;
 using ECom.Application;
 using ECom.Application.Mappings;
@@ -94,11 +95,12 @@ app.UseCors("AllowReactApp");
 app.UseSwagger();
 app.UseSwaggerUI();
 
-
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<UserStatusMiddleware>();
 
 app.MapControllers();
 app.Run();

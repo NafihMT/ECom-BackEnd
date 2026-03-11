@@ -8,6 +8,8 @@ public class OrderProfile : Profile
 {
     public OrderProfile()
     {
+        CreateMap<ShippingAddress, ShippingAddressDto>();
+
         CreateMap<OrderItem, OrderItemDto>()
             .ForMember(dest => dest.ProductName,
                 opt => opt.MapFrom(src => src.Product.Name))

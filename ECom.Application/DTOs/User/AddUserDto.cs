@@ -14,5 +14,5 @@ public class AddUserDto
 
     public string Password { get; set; }
 
-    public UserRole Role { get; set; }
+    public string Role { get; set; }
 }

@@ -16,12 +16,34 @@ public class OrderRepository : IOrderRepository
 
     public async Task<Order> CreateAsync(Order order)
     {
-        _context.Orders.Add(order);
-        await _context.SaveChangesAsync();
-        return order;
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            var cartItems = await _context.CartItems
+                .Include(ci => ci.Cart)
+                .Where(ci => ci.Cart.UserId == order.UserId)
+                .ToListAsync();
+
+            if (cartItems.Any())
+            {
+                _context.CartItems.RemoveRange(cartItems);
+                await _context.SaveChangesAsync();
+            }
+
+            await transaction.CommitAsync();
+            return order;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
-    
     public async Task<Order?> GetByIdAsync(int id)
     {
         return await _context.Orders
@@ -40,23 +62,25 @@ public class OrderRepository : IOrderRepository
             .ToListAsync();
     }
 
-
     public async Task UpdateAsync(Order order)
     {
         _context.Orders.Update(order);
         await _context.SaveChangesAsync();
     }
+
     public async Task SaveChangesAsync()
     {
         await _context.SaveChangesAsync();
     }
 
-    //public async Task<IEnumerable<Order>> GetAllAsync()
-    //{
-    //    return await _context.Orders
-    //        .Include(o => o.Items)
-    //        .ToListAsync();
-    //}
+    public async Task<IEnumerable<Order>> GetAllAsync()
+    {
+        return await _context.Orders
+            .Include(o => o.Items)
+                .ThenInclude(i => i.Product)
+            .OrderByDescending(o => o.CreatedAt)
+            .ToListAsync();
+    }
 
     public async Task<decimal> GetTotalRevenueAsync()
     {

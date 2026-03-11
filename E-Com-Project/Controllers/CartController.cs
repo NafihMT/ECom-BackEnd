@@ -42,8 +42,9 @@ public class CartController : ControllerBase
     [HttpPut("update/{itemId}")]
     public async Task<IActionResult> UpdateItem(int itemId, UpdateCartItemDto dto)
     {
-        await _cartService.UpdateCartItemAsync(itemId, dto);
-        return Ok(new ApiResponse<object>(200, "Updated successfully", dto));
+        var updatedItem = await _cartService.UpdateCartItemAsync(itemId, dto);
+
+        return Ok(new ApiResponse<CartItemDto>(200, "Updated successfully", updatedItem));
     }
 
     [HttpDelete("remove/{itemId}")]

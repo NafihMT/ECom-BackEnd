@@ -11,7 +11,7 @@ public interface IOrderRepository
     Task UpdateAsync(Order order);
     Task SaveChangesAsync();
 
-    //Task<IEnumerable<Order>> GetAllAsync();
+    Task<IEnumerable<Order>> GetAllAsync();
     Task<decimal> GetTotalRevenueAsync();
 
 }
